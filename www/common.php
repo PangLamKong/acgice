@@ -292,11 +292,6 @@ function isMobile()
     } 
     return false;
 } 
-if (isMobile()==true) {
-    return true;
-}else{
-    return false;
-}
 //安全策略 数字  失败弹出404 成功返回数组
 function security_numeric($id){
     if(!is_numeric($id)){
