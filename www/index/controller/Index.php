@@ -193,18 +193,21 @@ switch ($l) {
 
         
         $data = array();
-        $weather_data = null;
+        $tool_data = null;
 if($state !== 0){
         $Sosuo = new Sousuo;
         $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
-        
-        if ($Sosuo->is_weather_query($key)) {
-            $city = $Sosuo->extract_city($key);
-            $weather_data = $Sosuo->get_weather($city);
+
+        $tool_data = $Sosuo->get_tool($key);
+        if ($tool_data) {
+            if ($tool_data['type'] === 'weather') {
+                $Sosuo->get_sosuo($platform,$cache_time);
+                $data = $Sosuo->get_sort_V2();
+            }
+        } else {
+            $Sosuo->get_sosuo($platform,$cache_time);
+            $data = $Sosuo->get_sort_V2();
         }
-        
-        $Sosuo->get_sosuo($platform,$cache_time);
-        $data = $Sosuo->get_sort_V2();
 }
 
 
