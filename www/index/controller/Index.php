@@ -101,11 +101,15 @@ class Index  extends Controller
         }
 
         $data = array();
+        $tool_data = null;
         if($state !== 0){
             $Sosuo = new Sousuo;
-            $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
-            $Sosuo->get_sosuo($platform,$cache_time);
-            $data = $Sosuo->get_sort_V2();
+            $tool_data = $Sosuo->get_tool($key);
+            if (!$tool_data) {
+                $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
+                $Sosuo->get_sosuo($platform,$cache_time);
+                $data = $Sosuo->get_sort_V2();
+            }
         }
 
         $html_data = [
@@ -115,6 +119,7 @@ class Index  extends Controller
            'key' => $key,
            'page' => $page,
            'l' => $l,
+           'tool' => $tool_data,
         ];
         if($state !== 0){
             return view('pc/data_s',$html_data);
