@@ -87,12 +87,16 @@ class Index  extends Controller
 
         switch ($l) {
             case 'video':
-                $sy[] = 'Baidu';
+                $sy[] = 'Bing';
                 $cache_time = 3600;
                 break;
             default:
                 $l='web';
+                $sy[] = 'Bing';
                 $sy[] = 'Baidu';
+                $sy[] = 'DuckDuckGo';
+                $sy[] = 'Sogou';
+                $sy[] = 'So';
                 break;
         }
 
@@ -101,7 +105,7 @@ class Index  extends Controller
             $Sosuo = new Sousuo;
             $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
             $Sosuo->get_sosuo($platform,$cache_time);
-            $data = $Sosuo->get_sort_V1();
+            $data = $Sosuo->get_sort_V2();
         }
 
         $html_data = [
@@ -172,42 +176,28 @@ $data = array();
 switch ($l) {
     case 'video':
         //视频搜索
-        $sy[] = 'Baidu';
-        $cache_time = 3600;//缓存时间 1小时
+        $sy[] = 'Bing';
+        $cache_time = 3600;
         break;
     default:
         # 默认就是WEB 网页 缓存用默认的
         $l='web';
         $platform = 'pc';
-        if($platform == 'pc'){
-            //电脑搜索
-            $sy[] = 'Baidu';// 6.6 S  最慢  0.47 S
-        }else{
-            //手机搜索
-            $sy[] = 'Baidu';// 最慢 
-        }
-
+        $sy[] = 'Bing';
+        $sy[] = 'Baidu';
+        $sy[] = 'DuckDuckGo';
+        $sy[] = 'Sogou';
+        $sy[] = 'So';
         break;
 }
 
         
         $data = array();
 if($state !== 0){
-//print_r($sy);
-//echo '<br>';
-//debug('qq_qq');
-        $Sosuo = new Sousuo;//搜索聚合对象 By：小涛
-        $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);//初始化任务
-//debug('qq_set');
-        $Sosuo->get_sosuo($platform,$cache_time);//开始请求
-//debug('qq_end');
-        $data = $Sosuo->get_sort_V1();//排序算法
-//debug('sf_end');
-
-//echo '<br>总请求耗时：'.debug('qq_set','qq_end').'s<br>';
-//echo '算法耗时：'.debug('qq_end','sf_end').'s<br>';
-//echo '总耗时：'.debug('qq_qq','sf_end').'s<br>';
-//exit;
+        $Sosuo = new Sousuo;
+        $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
+        $Sosuo->get_sosuo($platform,$cache_time);
+        $data = $Sosuo->get_sort_V2();
 }
 
 
