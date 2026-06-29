@@ -99,13 +99,130 @@ class Sousuo extends Model
 		return $response;
 	}
 
+	private function get_domain($url) {
+		$host = parse_url($url, PHP_URL_HOST);
+		return $host ? $host : '';
+	}
+
+	private function get_favicon($url) {
+		$domain = $this->get_domain($url);
+		if (!$domain) return '';
+		return 'https://www.google.com/s2/favicons?domain=' . $domain . '&sz=64';
+	}
+
+	private function get_site_name($url, $title = '') {
+		$domain = $this->get_domain($url);
+		if (!$domain) return '';
+
+		$site_names = array(
+			'baidu.com' => '百度',
+			'zhidao.baidu.com' => '百度知道',
+			'baike.baidu.com' => '百度百科',
+			'tieba.baidu.com' => '百度贴吧',
+			'wenku.baidu.com' => '百度文库',
+			'jingyan.baidu.com' => '百度经验',
+			'csdn.net' => 'CSDN博客',
+			'blog.csdn.net' => 'CSDN博客',
+			'zhihu.com' => '知乎',
+			'www.zhihu.com' => '知乎',
+			'juejin.cn' => '掘金',
+			'www.juejin.cn' => '掘金',
+			'cnblogs.com' => '博客园',
+			'www.cnblogs.com' => '博客园',
+			'runoob.com' => '菜鸟教程',
+			'www.runoob.com' => '菜鸟教程',
+			'w3school.com.cn' => 'W3School',
+			'www.w3school.com.cn' => 'W3School',
+			'php.cn' => 'PHP中文网',
+			'www.php.cn' => 'PHP中文网',
+			'php.net' => 'PHP官方',
+			'www.php.net' => 'PHP官方',
+			'thinkphp.cn' => 'ThinkPHP官网',
+			'www.thinkphp.cn' => 'ThinkPHP官网',
+			'github.com' => 'GitHub',
+			'www.github.com' => 'GitHub',
+			'google.com' => 'Google',
+			'www.google.com' => 'Google',
+			'bing.com' => '必应',
+			'www.bing.com' => '必应',
+			'sogou.com' => '搜狗',
+			'www.sogou.com' => '搜狗',
+			'so.com' => '360搜索',
+			'www.so.com' => '360搜索',
+			'weibo.com' => '微博',
+			'www.weibo.com' => '微博',
+			'bilibili.com' => '哔哩哔哩',
+			'www.bilibili.com' => '哔哩哔哩',
+			'douban.com' => '豆瓣',
+			'www.douban.com' => '豆瓣',
+			'zh.wikipedia.org' => '维基百科',
+			'en.wikipedia.org' => 'Wikipedia',
+			'example.com' => '示例网站',
+		);
+
+		foreach ($site_names as $d => $name) {
+			if ($domain == $d || str_ends_with($domain, '.' . $d)) {
+				return $name;
+			}
+		}
+
+		return $domain;
+	}
+
+	private function is_official_site($url, $title = '', $desc = '') {
+		$domain = $this->get_domain($url);
+		if (!$domain) return false;
+
+		$official_keywords = array('官网', '官方', '官方网站', '官方首页');
+		foreach ($official_keywords as $kw) {
+			if (strpos($title, $kw) !== false || strpos($desc, $kw) !== false) {
+				return true;
+			}
+		}
+
+		$official_domains = array(
+			'php.net', 'php.cn', 'thinkphp.cn', 'python.org', 'java.com',
+			'oracle.com', 'mysql.com', 'postgresql.org', 'mongodb.com',
+			'react.dev', 'vuejs.org', 'angular.io', 'nodejs.org',
+			'github.com', 'git-scm.com', 'docker.com', 'kubernetes.io',
+			'google.com', 'apple.com', 'microsoft.com',
+		);
+		foreach ($official_domains as $d) {
+			if ($domain == $d || str_ends_with($domain, '.' . $d)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function enrich_result($item, $source = '') {
+		$link = $item['link'] ?? '';
+		$title = $item['title'] ?? '';
+		$desc = $item['desc'] ?? '';
+
+		$item['favicon'] = $this->get_favicon($link);
+		$item['site_name'] = $this->get_site_name($link, $title);
+		$item['domain'] = $this->get_domain($link);
+		$item['is_official'] = $this->is_official_site($link, $title, $desc);
+		$item['source'] = $source;
+
+		return $item;
+	}
+
+	private function enrich_results($results, $source = '') {
+		return array_map(function($item) use ($source) {
+			return $this->enrich_result($item, $source);
+		}, $results);
+	}
+
 	private function bing_search($keyword, $page = 1, $header = array()) {
 		$start = ($page - 1) * 10;
 		$url = 'https://www.bing.com/search?q=' . urlencode($keyword) . '&first=' . ($start + 1) . '&setlang=zh-CN';
 
 		$response = $this->curl_get($url, $header);
 		if ($response === false) {
-			return $this->get_mock_results($keyword, $page, 'Bing');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'Bing'), 'Bing');
 		}
 
 		$ql = QueryList::html($response);
@@ -127,9 +244,9 @@ class Sousuo extends Model
 		});
 
 		if (empty($result)) {
-			return $this->get_mock_results($keyword, $page, 'Bing');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'Bing'), 'Bing');
 		}
-		return array_values($result);
+		return $this->enrich_results(array_values($result), 'Bing');
 	}
 
 	private function baidu_search($keyword, $page = 1, $header = array()) {
@@ -163,9 +280,9 @@ class Sousuo extends Model
 		});
 
 		if (empty($result)) {
-			return $this->get_mock_results($keyword, $page, 'Baidu');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'Baidu'), 'Baidu');
 		}
-		return array_values($result);
+		return $this->enrich_results(array_values($result), 'Baidu');
 	}
 
 	private function duckduckgo_search($keyword, $page = 1, $header = array()) {
@@ -173,7 +290,7 @@ class Sousuo extends Model
 
 		$response = $this->curl_get($url, $header);
 		if ($response === false) {
-			return $this->get_mock_results($keyword, $page, 'DuckDuckGo');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'DuckDuckGo'), 'DuckDuckGo');
 		}
 
 		$ql = QueryList::html($response);
@@ -195,9 +312,9 @@ class Sousuo extends Model
 		});
 
 		if (empty($result)) {
-			return $this->get_mock_results($keyword, $page, 'DuckDuckGo');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'DuckDuckGo'), 'DuckDuckGo');
 		}
-		return array_values($result);
+		return $this->enrich_results(array_values($result), 'DuckDuckGo');
 	}
 
 	private function sogou_search($keyword, $page = 1, $header = array()) {
@@ -234,9 +351,9 @@ class Sousuo extends Model
 		});
 
 		if (empty($result)) {
-			return $this->get_mock_results($keyword, $page, 'Sogou');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'Sogou'), 'Sogou');
 		}
-		return array_values($result);
+		return $this->enrich_results(array_values($result), 'Sogou');
 	}
 
 	private function so_search($keyword, $page = 1, $header = array()) {
@@ -273,9 +390,9 @@ class Sousuo extends Model
 		});
 
 		if (empty($result)) {
-			return $this->get_mock_results($keyword, $page, '360');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, '360'), 'So');
 		}
-		return array_values($result);
+		return $this->enrich_results(array_values($result), 'So');
 	}
 
 	private function get_mock_results($keyword, $page = 1, $source = 'Mock') {
