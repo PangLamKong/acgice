@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - 北京天气 - AcgIce搜索</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/logicodev.min.css">
+    <style>
+        .source-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            margin-right: 5px;
+            font-size: 11px;
+            border-radius: 3px;
+            color: #fff;
+        }
+        .source-Bing { background-color: #008373; }
+        .source-Baidu { background-color: #2932e1; }
+        .source-DuckDuckGo { background-color: #de5833; }
+        .source-Sogou { background-color: #ff6a00; }
+        .source-So { background-color: #00aa00; }
+        .result-item {
+            transition: box-shadow 0.2s;
+            display: flex;
+            gap: 15px;
+        }
+        .result-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .result-favicon {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+        .result-favicon img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+        .result-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .result-content h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .result-content h4 a {
+            text-decoration: none;
+        }
+        .result-content h4 a:hover {
+            text-decoration: underline;
+        }
+        .site-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .site-name {
+            font-weight: 500;
+            color: #333;
+        }
+        .official-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            font-size: 11px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        .search-stats {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .search-engines {
+            font-size: 12px;
+            color: #666;
+        }
+        .result-desc {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .result-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .count-badge {
+            font-size: 12px;
+            color: #2196F3;
+        }
+        .sitelinks {
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 15px;
+        }
+        .sitelink-item {
+            font-size: 12px;
+            color: #1a0dab;
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sitelink-item:hover {
+            text-decoration: underline;
+        }
+        .result-thumbnail {
+            flex-shrink: 0;
+            width: 120px;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+        .result-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .weather-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .weather-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .weather-card .city-name {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .weather-card .temp-main {
+            font-size: 48px;
+            font-weight: 300;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .weather-card .weather-desc {
+            font-size: 16px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .weather-card .weather-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 13px;
+            opacity: 0.85;
+        }
+        .weather-card .weather-forecast {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .weather-card .forecast-item {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+        }
+        .weather-card .forecast-day {
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        .weather-card .forecast-weather {
+            margin-bottom: 3px;
+        }
+        .weather-card .forecast-temp {
+            opacity: 0.9;
+        }
+        .tool-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
+            background: #ff9800;
+            color: #fff;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="header" style="margin-top: 20px;">
+                    <div class="logo">
+                        <a href="/"><h2>AcgIce 搜索</h2></a>
+                    </div>
+                    <div class="search-box" style="margin-top: 10px;">
+                        <form id="search_form" action="" method="get">
+                            <div class="input-group">
+                                <input type="text" id="q" name="q" class="form-control" value="北京天气" placeholder="输入搜索的内容" autocomplete="off">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary">搜索</button>
+                                </span>
+                            </div>
+                            <input type="hidden" name="state" value="1">
+                            <input type="hidden" name="l" value="web">
+                        </form>
+                    </div>
+                </div>
+                <div class="results" style="margin-top: 30px;">
+                    <div class="search-stats">
+                        <p class="text-muted">
+                            为您找到相关结果约 <strong>37</strong> 条
+                            <span class="search-engines">
+                                | 搜索引擎: 
+                                <span class="source-badge source-Bing">Bing</span>
+                                <span class="source-badge source-Baidu">百度</span>
+                                <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                <span class="source-badge source-Sogou">搜狗</span>
+                                <span class="source-badge source-So">360</span>
+                            </span>
+                        </p>
+                    </div>
+
+                                        <div class="weather-card">
+                        <div class="tool-badge">🌤️ 天气工具</div>
+                        <div class="city-name">北京天气预报</div>
+                        <div class="temp-main">20°C</div>
+                        <div class="weather-desc">阴</div>
+                        <div class="weather-details">
+                            <span>最高 24° / 最低 15°</span>
+                            <span>湿度 53%</span>
+                            <span>西北风1级</span>
+                            <span>空气优</span>
+                        </div>
+                                                <div class="weather-forecast">
+                                                            <div class="forecast-item">
+                                    <div class="forecast-day">今天</div>
+                                    <div class="forecast-weather">小雪</div>
+                                    <div class="forecast-temp">22° / 15°</div>
+                                </div>
+                                                            <div class="forecast-item">
+                                    <div class="forecast-day">明天</div>
+                                    <div class="forecast-weather">多云</div>
+                                    <div class="forecast-temp">22° / 18°</div>
+                                </div>
+                                                            <div class="forecast-item">
+                                    <div class="forecast-day">后天</div>
+                                    <div class="forecast-weather">大雪</div>
+                                    <div class="forecast-temp">22° / 17°</div>
+                                </div>
+                                                    </div>
+                                                <div style="font-size: 11px; opacity: 0.6; margin-top: 10px;">更新时间: 2026-06-30 02:03</div>
+                    </div>
+                            <div class="result-list">
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.weather.com.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.weather.com.cn</span>
+                                                    <span class="text-muted">www.weather.com.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.weather.com.cn/weather/101010100.shtml" target="_blank">北京天气预报,北京7天天气预报,北京15天天气预报,北京天气查询</a>
+                    </h4>
+                                        <p class="result-desc">18 小时之前 · 北京天气预报，及时准确发布中央气象台天气信息，便捷查询北京今日天气，北京周末天气，北京一周天气预报，北京 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=baike.baidu.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">百度</span>
+                                                    <span class="text-muted">baike.baidu.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://baike.baidu.com/item/%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气 - 百度百科</a>
+                    </h4>
+                                        <p class="result-desc">北京天气是一个广泛关注的话题。本词条详细介绍了北京天气的定义、发展历程、应用领域等内容。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=weatherol.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">weatherol.cn</span>
+                                                    <span class="text-muted">weatherol.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://weatherol.cn/index.html?cityid1=110000" target="_blank">北京天气预报_一周天气预报</a>
+                    </h4>
+                                        <p class="result-desc">24小时预报
+
+                                        多云转中雨
+                                        东南风微风
+                                    
+
+                                        雷阵雨转小雨
+                                        东南风微风
+                                    
+
+                                            21~27℃
+                                        
+
+                                        多云
+                                        东南风微风
+                                    
+
+                                        雷阵雨转多云
+                                        南风微风
+                                    
+
+                                        雷阵雨转阴
+                                        南风微风
+                                    
+
+                                        雷阵雨
+                                        东南风微风
+                                    
+
+                                        雷阵雨转多云
+                                        东北风微风
+                                    
+
+                                        小雨
+                                        东南风微风
+                                    
+昨天
+                                            2026-06-29
+                                        
+多云
+21~28℃
+东南风微风
+今天
+                                            2026-06-30
+                                        
+阵雨
+21~27℃
+东南风微风
+明天
+                                            2026-07-01
+                                        
+多云
+21~30℃
+东南风微风
+周四
+                                            2026-07-02
+                                        
+阵雨
+21~31℃
+南风微风
+周五
+                                            2026-07-03
+                                        
+阵雨
+24~32℃
+南风微风
+周六
+                                            2026-07-04
+                                        
+阵雨
+21~31℃
+东南风微风
+周日
+                                            2026-07-05
+                                        
+阵雨
+19~27℃
+东北风微风
+周一
+                                            2026-07-06
+                                        
+小雨
+20~30℃
+东南风微风</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=tianqi.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">tianqi.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="http://tianqi.so.com/weather/101010100" target="_blank">北京天气预报_15天_45天天气查询_全国天气网</a>
+                    </h4>
+                                        <p class="result-desc">06月30日 |  周二
+昨天
+06 / 29
+多云转雷阵雨
+21~28℃
+今天
+06 / 30
+雷阵雨转小雨
+21~27℃
+周三
+07 / 01
+多云
+22~30℃
+周四
+07 / 02
+雷阵雨转多云
+21~29℃
+周五
+07 / 03
+雷阵雨转阴
+24~32℃
+周六
+07 / 04
+雷阵雨
+21~31℃
+周日
+07 / 05
+雷阵雨转多云
+19~27℃
+周一
+07 / 06
+阴
+20~32℃
+周二
+07 / 07
+阴转阵雨
+20~29℃
+周三
+07 / 08
+阵雨
+19~26℃
+周四
+07 / 09
+阵雨
+22~31℃
+周五
+07 / 10
+阵雨
+21~32℃
+周六
+07 / 11
+阴转阵雨
+21~32℃
+周日
+07 / 12
+阵雨
+18~22℃
+现在
+1mm
+02点
+1mm
+05点
+8mm
+08点
+0mm
+11点
+0mm
+14点
+0mm
+17点
+0mm
+20点
+0mm
+23点
+0mm
+穿衣
+热
+穿衣：热
+天气热，建议着短裙、短裤、短薄外套、T恤等夏季服装。
+运动
+较适宜
+运动：较适宜
+天气较好，户外运动请注意防晒，推荐您在室内进行低强度运动。
+感冒
+少发
+感冒：少发
+各项气象条件适宜，发生感冒机率较低。但请避免长期处于空调房间中，以防感冒。
+洗车
+不宜
+洗车：不宜
+不宜洗车，未来24小时内有雨，如果在此期间洗车，雨水和路上的泥水可能会再次弄脏您的爱车。
+紫外线
+强
+紫外线：强
+紫外线辐射强，建议涂擦SPF20左右、PA++的防晒护肤品。避免在10点至14点暴露于日光下。
+空调
+部分时间开启
+空调：部分时间开启
+天气热，到中午的时候您将会感到有点热，因此建议在午后较热时开启制冷空调。
+tianqi.so.com  中国气象局2026年06月30日01时发布  15天预报  45天预报  建议</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=zh.wikipedia.org&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">维基百科</span>
+                                                    <span class="text-muted">zh.wikipedia.org</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://zh.wikipedia.org/wiki/%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气 - 维基百科</a>
+                    </h4>
+                                        <p class="result-desc">北京天气的详细介绍，包括历史背景、技术原理、发展现状以及未来展望等全面信息。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.weather.com.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.weather.com.cn</span>
+                                                    <span class="text-muted">www.weather.com.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.weather.com.cn/weather1dn/101010100.shtml" target="_blank">北京天气预报,北京7天天气预报,北京15天天气预报,北京天气 ...</a>
+                    </h4>
+                                        <p class="result-desc">18 小时之前 · 北京天气预报，及时准确发布中央气象台天气信息，便捷查询北京今日天气，北京周末天气，北京一周天气预报，北 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.runoob.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">菜鸟教程</span>
+                                                    <span class="text-muted">www.runoob.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.runoob.com/%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94/" target="_blank">北京天气入门教程 - 菜鸟教程</a>
+                    </h4>
+                                        <p class="result-desc">菜鸟教程提供的北京天气入门教程，从基础到进阶，适合初学者系统学习。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=baike.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">baike.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://baike.sogou.com/v18797247.htm?ch=frombaikevr&amp;fromTitle=%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气（北京的气候）- 搜狗百科</a>
+                    </h4>
+                                        <p class="result-desc">北京天气为典型的暖温带半湿润大陆性季风气候，夏季高温多雨，冬季寒冷干燥，春、秋短促。2023年8月3日，中国气象局在发布会上表示，2023年7月29日至8月1日，京津冀等地出现历史极端强降雨过程...详情</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=wXSJlkmkekzh7SrcxWJ6IGJqKCop8DvmFSsJsG0vlylGGWko3lw06ITl7VsT3onA0Qyta14UA5sRQBE2ZoWSfegK4Zdg4sirZO1CAcFYoxF9bwFmQqXOUMGXto%2FGsWJKmOceGm8cpGnjHPQk%2BVULjgL%2B7CSZfL9njmeFfMQlMZVDOJqleogtW3G91dg4%3D" target="_blank">北京天气预报,北京7天天气预报,北京15天天气预报,北京天气查询</a>
+                    </h4>
+                                        <p class="result-desc">www.weather.com.cn反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.zhihu.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">知乎</span>
+                                                    <span class="text-muted">www.zhihu.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.zhihu.com/search?q=%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气 - 知乎</a>
+                    </h4>
+                                        <p class="result-desc">知乎上关于北京天气的讨论，包括行业分析、技术分享、经验交流等优质内容。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.msn.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.msn.com</span>
+                                                    <span class="text-muted">www.msn.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.msn.com/zh-cn/weather/forecast/in-%E5%8C%97%E4%BA%AC" target="_blank">北京市 天气预报 | MSN 天气</a>
+                    </h4>
+                                        <p class="result-desc">2026年4月15日 · 使用 MSN 天气 获取 北京市 今天、晚上和明天的每小时准确预测，以及 10 天每日预测和天气雷达。随时了解降水、 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=blog.csdn.net&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">CSDN博客</span>
+                                                    <span class="text-muted">blog.csdn.net</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://blog.csdn.net/%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气 - CSDN博客</a>
+                    </h4>
+                                        <p class="result-desc">CSDN博客上的北京天气相关技术文章，包含大量实战经验和解决方案。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/sogou?ie=utf8&amp;interation=1728053249&amp;interV=&amp;query=%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气_相关资讯</a>
+                    </h4>
+                                        <p class="result-desc"></p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=zKIRjDw%2FQm9wcDeNyV1y77ZGF1deLs2Waog34xemAgIx7DvLTr5meS%2BWM0lpfiGqTrdYu1Y0CHqGezlKhLq8C1jcjzjLgLpo%2BfpxBZo4Fdq315IAGQy1gju7FiURFoebv9qo4D5%2FJVrj3K%2BF2lqsTiPmbC8zmHzV9G%2F2ZMl8ZYlxNMIROHw3VgjAHGJdbi%2F2G" target="_blank">北京-天气预报</a>
+                    </h4>
+                                        <p class="result-desc">2026年5月27日 - 周二05/27周三05/28今天05/29明天05/30后天05/31周日06/01周一06/02周二06/03周三中央气象... Created with Highcharts 8.0.0温度(°C)降水(mm)1981年...
+www.nmc.cn&gt;...&gt;北京市&gt;北京天气预报反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94.com</span>
+                                                    <span class="official-badge">官网</span>
+                                                    <span class="text-muted">www.%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94.com" target="_blank">北京天气官方网站</a>
+                    </h4>
+                                        <p class="result-desc">北京天气的官方网站，提供最新的产品信息、文档下载和技术支持。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.nmc.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.nmc.cn</span>
+                                                    <span class="text-muted">www.nmc.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="http://www.nmc.cn/publish/forecast/ABJ/beijing.html" target="_blank">北京-天气预报</a>
+                    </h4>
+                                        <p class="result-desc">18 小时之前 · 提供北京地区最新天气预报，包括气温、降水量和其他相关信息。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=juejin.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">掘金</span>
+                                                    <span class="text-muted">juejin.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://juejin.cn/search?query=%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气 - 掘金</a>
+                    </h4>
+                                        <p class="result-desc">掘金社区的北京天气相关文章，汇聚开发者的技术分享和最佳实践。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=hedJjaC291OyiGvgbfIkd3HGCrkrvQvwdu7EWiNUvkz-D5DBB-b0h63mlRzfPLR2" target="_blank">【北京天气预报】北京一周天气预报,北京天气预报15天,30天,40...</a>
+                    </h4>
+                                        <p class="result-desc">北京天气网提供北京地区天气预报查询，准确提供北京天气预报15天，30天，7天，40天天气查询，以及北京一周天气预报查询，北京未来十五天气预报查询，北京历史天气查...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.tianqi.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.tianqi.com</span>
+                                                    <span class="text-muted">www.tianqi.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.tianqi.com/beijing/15/" target="_blank">北京天气预报15天_北京天气预报15天查询,北京未来15天天气预报- 北京...</a>
+                    </h4>
+                                        <p class="result-desc">www.tianqi.com反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=example.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">示例网站</span>
+                                                    <span class="text-muted">example.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://example.com/deep-%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">深入理解北京天气</a>
+                    </h4>
+                                        <p class="result-desc">深入探讨北京天气的核心原理、底层实现和高级应用技巧，助你成为专家。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=beijing.tianqi.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">beijing.tianqi.com</span>
+                                                    <span class="text-muted">beijing.tianqi.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://beijing.tianqi.com/" target="_blank">【北京天气预报】北京天气预报一周_北京天气预报10天、15 ...</a>
+                    </h4>
+                                        <p class="result-desc">天气网（www.tianqi.com）北京天气预报提供北京今日天气、明天天气以及北京未来一周的天气预报,可以实时查看北京天气、北京天 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=example.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">示例网站</span>
+                                                    <span class="text-muted">example.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://example.com/practice-%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气实战指南</a>
+                    </h4>
+                                        <p class="result-desc">从实战角度出发，通过多个案例帮助你快速掌握北京天气的应用方法。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=hedJjaC291Mc_pDLxSQPISs7HtWcSxRp_g-QwQfm9IfOLBheNdeJVM_fE_qQkO2P" target="_blank">【北京天气预报】北京天气预报一周,15天,30天天气查询-2345天气...</a>
+                    </h4>
+                                        <p class="result-desc">北京未来40天天气趋势 3 天降温/ 5 天升温, 11 天有雨 6月08日16~28° 阴转雷阵雨 雨雪 高温 低温 降雨 降雪 生活指数 06月08日 生活健康 户外出行 少发感冒 天气舒适 不适宜晾晒 不适宜 紫外线很弱 不宜晨练 日 一 二 三 四 五 六 本地各区天气 热...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=wqf50%2FvGNsO9RKGoEqM%2Bg6caQu2V02z19DgIt8lXqUjXVahzmZ3yBLIOufXoTNhKaxyncqDpYQWRolP6pUggEe4IH1IuJY0DwhwCHu%2F3MaUbpejy6yhO5EFFQ5CJkwuhEg%2FmMWu3JbRLtR1jnERiunQ%3D%3D" target="_blank">【北京天气预报】北京天气预报一周_北京天气预报10天、15天查询—天气网</a>
+                    </h4>
+                                        <p class="result-desc">2026年5月29日 - 首页天气空气质量天气新闻天气生活视频万年历北京.北京15天天气北京30天天气05月29日星期五...
+beijing.tianqi.com反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=example.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">示例网站</span>
+                                                    <span class="text-muted">example.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://example.com/faq-%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94" target="_blank">北京天气常见问题汇总</a>
+                    </h4>
+                                        <p class="result-desc">收集整理了北京天气学习和使用过程中的常见问题及解决方案。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.tianqi.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.tianqi.com</span>
+                                                    <span class="text-muted">www.tianqi.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.tianqi.com/beijing/today/" target="_blank">【北京今天天气预报】北京天气预报24小时详情_北京天气网</a>
+                    </h4>
+                                        <p class="result-desc">2024年9月24日 · 北京一周天气 北京10天天气 北京15天天气 北京30天天气 晴 多云 多云 阴 阴 阴 小雨 小雨 28 29 29 28 27 26 25 25  …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DSOYnZeCC_oXK0n85IKhX8ZmoRA401mjqvoJYoWG6ehLQXt44KY-Q2XcV-K5ENzn" target="_blank">北京天气预报</a>
+                    </h4>
+                                        <p class="result-desc">北京天气预报，及时准确发布中央气象台天气信息，便捷查询北京今日天气，北京明日天气，北京一周天气预报，北京天气预报还提供北京各区县的生活指...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=bo9Dkoy7rkO60rJdl%2BeTpHsljWlAjvmWiCihXGeqBTB6d1rDCdhvcRxb5es2rPGedpRFqg6LWpnqhJHAkdWVGQcuPdY0YFD3H0AbrUEzxiwTl%2BlOwi0mbF9%2FWDroikReHHGawvuwU4YCtIG8AP%2BlBToi454dsIo3YNy5E9A%3D%3D" target="_blank">【北京24小时天气查询】_北京今日逐小时天气预报查询_2345天气预报</a>
+                    </h4>
+                                        <p class="result-desc">tianqi.2345.com反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=bj.cma.gov.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">bj.cma.gov.cn</span>
+                                                    <span class="text-muted">bj.cma.gov.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="http://bj.cma.gov.cn/" target="_blank">北京市气象局</a>
+                    </h4>
+                                        <p class="result-desc">主办单位：北京市气象局 技术支持： 北京市气象数据中心 地址：北京市海淀区紫竹院路 44 号 邮编：100089 网站标识 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DSOYnZeCC_oXK0n85IKhX8ZmoRA401mj_LgC6MGzGc3d_UpL8UccQBQKsLOApPCG0ztd7q5nl6o." target="_blank">北京天气预报,北京7天天气预报,北京15天天气预报,北京天气查询</a>
+                    </h4>
+                                        <p class="result-desc">提供【北京天气预报】，一周，15天查询，40天查询，气象云图，空气质量，天气实况，温度，降水，风力，气压，紫外线等及时准确发布，是中央气象台...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=u7zuFNtqzcrk1FUhjAzRwGuSlsY6WtyflXjLluoVgLgv%2FT2CetxGYMGUgAwBk7hZFoMfSIaTT7wAn%2B3CLTM9HhJBQXH5ie5D3KKMjQOxeY44RihXLRfx7XvqLmVOHiMGrUtrI2gTFoq0LOAHTyVj4JiT7CjI%3D" target="_blank">北京天气_北京实时天气预报_北京24小时天气预报</a>
+                    </h4>
+                                        <p class="result-desc">tianqi.cncn.com反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=tianqi.2345.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">tianqi.2345.com</span>
+                                                    <span class="text-muted">tianqi.2345.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://tianqi.2345.com/" target="_blank">天气,天气预报查询,24小时,今天,明天,未来一周7天,10天,15 ...</a>
+                    </h4>
+                                        <p class="result-desc">2 天之前 · 2345天气预报准确提供24小时、今天、明天、未来一周7天、10天、15天、30天及40天天气预报查询服务，可以查询全 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DOb0bgH2eKh1izA18nbfFx7I1CF5xjY8Me9Dgu3C8Uc." target="_blank">北京天气预报_北京天气预报一周_北京天气预报7天,10天,15天查询-...</a>
+                    </h4>
+                                        <p class="result-desc">北京天气指数6月17日 5月30日 周六 农历闰四月初八查看黄历》 天气热 建议穿薄型T恤短裤等夏装。 建议带伞 短时外出可以不带伞。 少发感冒 发生感冒机...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=bj.cma.gov.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">bj.cma.gov.cn</span>
+                                                    <span class="text-muted">bj.cma.gov.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="http://bj.cma.gov.cn/fzlm/index.html" target="_blank">北京市气象局</a>
+                    </h4>
+                                        <p class="result-desc">北京市气象局 东城西城朝阳海淀丰台石景山门头沟房山通州顺义昌平大兴怀柔平谷密云延庆经开区</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DOb0bgH2eKgzH5SXsCUYlrMWYQ6cBjNeG_H1iKm2_78." target="_blank">【北京天气预报】北京天气预报一周_北京天气预报10天、15天查询—...</a>
+                    </h4>
+                                        <p class="result-desc">天气网（www.tianqi.com）北京天气预报提供北京今日天气、明天天气以及北京未来一周的天气预报，可以实时查看北京天气、北京天气预报一周、10天、15天、30天、40天的天...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=hedJjaC291MiHQq3_EEtII-RjzukkKlM2l69iHjuxz2lWg56xPJIkfAyPKTI2SCE" target="_blank">北京天气预报,北京未来15天天气预报</a>
+                    </h4>
+                                        <p class="result-desc">为你提供快速准确的北京一周天气预报，未来15天的天气预报和气象趋势预测，主要指标包括每天最高气温、最低气温、天气状况、风向等..</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DSOYnZeCC_qHkzcdeUad6IAXfwqf3slVfXs_eQnpoU-t5pUc3zy0dg.." target="_blank">北京天气预报一周_北京天气预报10天_北京天气预报15天查询_114天...</a>
+                    </h4>
+                                        <p class="result-desc"></p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+            </div>
+                </div>
+<div class="pagination text-center" style="margin-top: 30px;">
+        <span class="btn btn-default">第 1 页</span>
+            <a href="?q=%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94&page=2&state=1&l=web" class="btn btn-primary">下一页</a>
+    </div>
+                <div class="footer text-center" style="margin-top: 50px; padding-bottom: 30px;">
+                    <p class="text-muted">AcgIce 搜索 - 多语言聚合搜索引擎</p>
+                    <p class="text-muted" style="font-size: 12px;">聚合 Bing、百度、DuckDuckGo、搜狗、360 搜索结果</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/jquery-1.11.1.min.js"></script>
+    <script src="/static/js/searx.min.js"></script>
+</body>
+</html>

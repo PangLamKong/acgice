@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - Python - AcgIce搜索</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/logicodev.min.css">
+    <style>
+        .source-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            margin-right: 5px;
+            font-size: 11px;
+            border-radius: 3px;
+            color: #fff;
+        }
+        .source-Bing { background-color: #008373; }
+        .source-Baidu { background-color: #2932e1; }
+        .source-DuckDuckGo { background-color: #de5833; }
+        .source-Sogou { background-color: #ff6a00; }
+        .source-So { background-color: #00aa00; }
+        .result-item {
+            transition: box-shadow 0.2s;
+            display: flex;
+            gap: 15px;
+        }
+        .result-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .result-favicon {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+        .result-favicon img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+        .result-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .result-content h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .result-content h4 a {
+            text-decoration: none;
+        }
+        .result-content h4 a:hover {
+            text-decoration: underline;
+        }
+        .site-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .site-name {
+            font-weight: 500;
+            color: #333;
+        }
+        .official-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            font-size: 11px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        .search-stats {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .search-engines {
+            font-size: 12px;
+            color: #666;
+        }
+        .result-desc {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .result-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .count-badge {
+            font-size: 12px;
+            color: #2196F3;
+        }
+        .sitelinks {
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 15px;
+        }
+        .sitelink-item {
+            font-size: 12px;
+            color: #1a0dab;
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sitelink-item:hover {
+            text-decoration: underline;
+        }
+        .result-thumbnail {
+            flex-shrink: 0;
+            width: 120px;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+        .result-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .weather-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .weather-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .weather-card .city-name {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .weather-card .temp-main {
+            font-size: 48px;
+            font-weight: 300;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .weather-card .weather-desc {
+            font-size: 16px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .weather-card .weather-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 13px;
+            opacity: 0.85;
+        }
+        .weather-card .weather-forecast {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .weather-card .forecast-item {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+        }
+        .weather-card .forecast-day {
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        .weather-card .forecast-weather {
+            margin-bottom: 3px;
+        }
+        .weather-card .forecast-temp {
+            opacity: 0.9;
+        }
+        .tool-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
+            background: #ff9800;
+            color: #fff;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="header" style="margin-top: 20px;">
+                    <div class="logo">
+                        <a href="/"><h2>AcgIce 搜索</h2></a>
+                    </div>
+                    <div class="search-box" style="margin-top: 10px;">
+                        <form id="search_form" action="" method="get">
+                            <div class="input-group">
+                                <input type="text" id="q" name="q" class="form-control" value="Python" placeholder="输入搜索的内容" autocomplete="off">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary">搜索</button>
+                                </span>
+                            </div>
+                            <input type="hidden" name="state" value="1">
+                            <input type="hidden" name="l" value="web">
+                        </form>
+                    </div>
+                </div>
+                <div class="results" style="margin-top: 30px;">
+                    <div class="search-stats">
+                        <p class="text-muted">
+                            为您找到相关结果约 <strong>33</strong> 条
+                            <span class="search-engines">
+                                | 搜索引擎: 
+                                <span class="source-badge source-Bing">Bing</span>
+                                <span class="source-badge source-Baidu">百度</span>
+                                <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                <span class="source-badge source-Sogou">搜狗</span>
+                                <span class="source-badge source-So">360</span>
+                            </span>
+                        </p>
+                    </div>
+
+                        <div class="result-list">
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=cn-aci.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">cn-aci.com</span>
+                                                    <span class="text-muted">cn-aci.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="http://cn-aci.com/" target="_blank">美国认证协会 - ACI中国总部</a>
+                    </h4>
+                                        <p class="result-desc">美国认证协会ACI设立于美国科罗拉多州,在中国,授权美英澳加国际文化交流公司成为ACI中国总部，组织开展ACI在国内的相关业务。 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=baike.baidu.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">百度</span>
+                                                    <span class="text-muted">baike.baidu.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://baike.baidu.com/item/Python" target="_blank">Python - 百度百科</a>
+                    </h4>
+                                        <p class="result-desc">Python是一个广泛关注的话题。本词条详细介绍了Python的定义、发展历程、应用领域等内容。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=baike.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">baike.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://baike.sogou.com/v58828.htm?ch=frombaikevr&amp;fromTitle=Python" target="_blank">Python（计算机编程语言）- 搜狗百科</a>
+                    </h4>
+                                        <p class="result-desc">Python是一种广泛使用的解释型、高级和通用的编程语言，由荷兰数学和计算机科学研究学会的Guido van Rossum创造，第一版发布于1991年，它是ABC语言的后继者，也可以视之为一种使用传统中缀表达...详情</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=uMmauU9IQd2CqJFKbQpTI2yTRVjNiAcd3rUSx%2FsB%2Bos3tOcpUSDS1G%2FnkdACnCY%2FVRifIs56e3EHlVjgFfHjPnIAtbznNEdB1Q1uWt%2FTLBOs%3D" target="_blank">Welcome to Python.org</a>
+                    </h4>
+                                        <p class="result-desc">www.python.org反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=zh.wikipedia.org&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">维基百科</span>
+                                                    <span class="text-muted">zh.wikipedia.org</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://zh.wikipedia.org/wiki/Python" target="_blank">Python - 维基百科</a>
+                    </h4>
+                                        <p class="result-desc">Python的详细介绍，包括历史背景、技术原理、发展现状以及未来展望等全面信息。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.cn-aci.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.cn-aci.com</span>
+                                                    <span class="text-muted">www.cn-aci.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.cn-aci.com/news/detail/id/17.html" target="_blank">aci新闻详情-关于中科院心理所虚假宣传、不正当竞争ACI的声明</a>
+                    </h4>
+                                        <p class="result-desc">2019年10月25日 · aci新闻详情-ACI美国认证协会设立于美国科罗拉多州,在中国,授权美英澳加国际文化交流公司成为中国总部，组织开 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.runoob.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">菜鸟教程</span>
+                                                    <span class="text-muted">www.runoob.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.runoob.com/Python/" target="_blank">Python入门教程 - 菜鸟教程</a>
+                    </h4>
+                                        <p class="result-desc">菜鸟教程提供的Python入门教程，从基础到进阶，适合初学者系统学习。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="official-badge">官网</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DSOYnZeCC_r2TvZO1NvjbT7l_ZlZ-jbQvh13yzj3ySs4d2X6F0SQYA.." target="_blank">Python官方版_Python官方版下载-下载之家</a>
+                    </h4>
+                                        <p class="result-desc">Python官方版是一种功能强大，轻量便捷的计算机程序设计语言，它也是一种功能强大而完善的通用型语言，成熟且稳定。Python官方版具有非常简捷而清...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=bS5wi3ACFn7jKou91WufnaW4Uf3y3TR7hSIV3sVkkFt8xPVwA%2BaWQHvJd1UNyuyRHx2i76SbixYK%2Bi5PZJcgREGIc43xqw%2B9JQ50Gj3GwLRoxdpTJtWfSL7Np7oZtvGsTCDAyQWM7FL8%3D" target="_blank">Python 简介| 菜鸟教程</a>
+                    </h4>
+                                        <p class="result-desc">Python 简介 Python是一个高层次的结合了解释性、编译性、互动性和面向对象的脚本语言。 Python的设计具有很强的可读性,相比其他语言经常使用英文关键字,其他语言的一...
+www.runoob.com反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.zhihu.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">知乎</span>
+                                                    <span class="text-muted">www.zhihu.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.zhihu.com/search?q=Python" target="_blank">Python - 知乎</a>
+                    </h4>
+                                        <p class="result-desc">知乎上关于Python的讨论，包括行业分析、技术分享、经验交流等优质内容。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=cn-aci.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">cn-aci.com</span>
+                                                    <span class="text-muted">cn-aci.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://cn-aci.com/news/detail/id/72.html" target="_blank">aci新闻详情-ACI美国认证协会2025年4月考试通知</a>
+                    </h4>
+                                        <p class="result-desc">2025年4月12日 · ACI美国认证协会考试说明： 考试为中文考试。考试时间为120分钟，从进入考试系统开始进行倒计时。 请在所参考 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=blog.csdn.net&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">CSDN博客</span>
+                                                    <span class="text-muted">blog.csdn.net</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://blog.csdn.net/Python" target="_blank">Python - CSDN博客</a>
+                    </h4>
+                                        <p class="result-desc">CSDN博客上的Python相关技术文章，包含大量实战经验和解决方案。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.aminer.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.aminer.cn</span>
+                                                    <span class="text-muted">www.aminer.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.aminer.cn/search/pub?q=Python" target="_blank">Python - AMiner学术</a>
+                    </h4>
+                                        <p class="result-desc">&#039;PYTHON&#039; was a PYTHON contingency plan of the British Government for the continuity of government in the event of nuclear war.
+            
+
+                            相关领域：
+                            
+                                
+                                    
+                                                    machine learning
+                                                    programming
+                                                    java
+                                                    programming language
+                                                    visualization
+                                                    data mining
+                                                raspberry pi
+                                                software
+                                                public domain software
+                                                bioinformatics
+                                                tools
+                                                simulation
+                                                scientific computing
+                                                open source
+                                                computer languages
+                                                high level languages
+                                                scripting
+                                                scripting language
+                                                data analysis
+                                                linux
+                                                    展开
+                                    
+                                
+                                
+                            
+                        
+
+                            相关人物：
+                            
+                                
+                                
+                                    
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Willibrordus Martinus Pancratius Van Der Aalst                                                            RWTH Aachen University                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Alex (Sandy) Pentland                                                            Massachusetts Institute of Technology                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Ian T. Foster                                                            Argonne National Laboratory/University of Chicago                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Ed Bullmore                                                            Department of Paediatrics, University of Cambridge                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Jure Leskovec                                                            Department of Computer Science, Stanford University                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Gerbrand Ceder                                                            Department of Materials Science and Engineering, University of California Berkeley                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Kuo-Chen Chou                                                            Gordon Life Science Institute                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                            
+  
+
+
+
+      
+
+      
+        
+          
+				
+					
+						
+						
+
+	
+
+	
+	
+	
+
+
+					
+			
+
+			
+		
+          
+        
+      
+              
+    
+
+    
+
+    
+    
+Henry C. Ferguson                                                            Space Telescope Science Institute                                                                
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+      
+    
+
+                                    
+                                        展开
+                                        
+                                
+                            
+                        
+Willibrordus Martinus Pancratius Van Der Aalst                                                            
+RWTH Aachen University                                                            
+Alex (Sandy) Pentland                                                            
+Massachusetts Institute of Technology                                                            
+Ian T. Foster                                                            
+Argonne National Laboratory/University of Chicago                                                            
+Ed Bullmore                                                            
+Department of Paediatrics, University of Cambridge                                                            
+Jure Leskovec                                                            
+Department of Computer Science, Stanford University                                                            
+Gerbrand Ceder                                                            
+Department of Materials Science and Engineering, University of California Berkeley                                                            
+Kuo-Chen Chou                                                            
+Gordon Life Science Institute                                                            
+Henry C. Ferguson                                                            
+Space Telescope Science Institute</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=bk%2BBtU4Ki0gMknhwjhUeu%2BYSbDGcobvlNXphswKPDvwiTPm3NB56Q17zsTS4Rj4m%2BnNB5Sd7PTgw62A%2BWBeLI4bdbfIY29JyfY5J%2BCoK9C%2B%2BG2%2Fz0ZCMNqD8CIWU%3D" target="_blank">Download Python | Python.org</a>
+                    </h4>
+                                        <p class="result-desc">www.python.org反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.Python.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.Python.com</span>
+                                                    <span class="official-badge">官网</span>
+                                                    <span class="text-muted">www.Python.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.Python.com" target="_blank">Python官方网站</a>
+                    </h4>
+                                        <p class="result-desc">Python的官方网站，提供最新的产品信息、文档下载和技术支持。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=cn-aci.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">cn-aci.com</span>
+                                                    <span class="official-badge">官网</span>
+                                                    <span class="text-muted">cn-aci.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://cn-aci.com/news/detail/id/80.html" target="_blank">美国认证协会（ACI）— 官方授权iMissoft 品牌公告</a>
+                    </h4>
+                                        <p class="result-desc">2025年11月24日 · 美国认证协会（ACI）— 官方授权公告 证书编号：ACI-IMISSOFT-2025-006 签发日期：2025年12月1日 美国认证协 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=juejin.cn&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">掘金</span>
+                                                    <span class="text-muted">juejin.cn</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://juejin.cn/search?query=Python" target="_blank">Python - 掘金</a>
+                    </h4>
+                                        <p class="result-desc">掘金社区的Python相关文章，汇聚开发者的技术分享和最佳实践。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=hedJjaC291MED-28m_03f6fgSsgZ2uwVJpb_7nlYYz0GI3LxaZaC3EQx7zNUGcQbotbqGdVlYkN_n57eLbkTJZd6NOWGPiC3tsCnpVGpPpA." target="_blank">Python十分钟入门 | 菜鸟教程</a>
+                    </h4>
+                                        <p class="result-desc">简介 Python是一种动态解释型的编程语言。Python可以在Windows、UNIX、MAC等多种操作系统上使用,也可以在Java、.NET开发平台上使用。 特点 1 Python使用C语言开发,...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=baike.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">baike.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://baike.so.com/doc/1790119-30336351.html" target="_blank">Python(英文单词)百科</a>
+                    </h4>
+                                        <p class="result-desc"></p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=example.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">示例网站</span>
+                                                    <span class="text-muted">example.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://example.com/deep-Python" target="_blank">深入理解Python</a>
+                    </h4>
+                                        <p class="result-desc">深入探讨Python的核心原理、底层实现和高级应用技巧，助你成为专家。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=cn-aci.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">cn-aci.com</span>
+                                                    <span class="text-muted">cn-aci.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://cn-aci.com/news/detail/id/37.html" target="_blank">aci新闻详情-关于仿冒ACIC的严正声明！</a>
+                    </h4>
+                                        <p class="result-desc">2021年11月16日 · 2、证书完全仿冒ACI美国认证协会的证书。 直接冒用美国认证协会American Certification Institute的品牌名义印刷 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=example.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">示例网站</span>
+                                                    <span class="text-muted">example.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://example.com/practice-Python" target="_blank">Python实战指南</a>
+                    </h4>
+                                        <p class="result-desc">从实战角度出发，通过多个案例帮助你快速掌握Python的应用方法。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=6YUuC6e6hWZZdQX9RNcFZ38Qr4RMB1L3hymBvKzWwwQ." target="_blank">Python基础教程,Python入门教程(非常详细) - C语言中文网</a>
+                    </h4>
+                                        <p class="result-desc">这套Python基础教程通俗易懂,深入浅出,旨在帮助大家快速入门。这套Python教程虽然学习门槛低,但是知识体系很丰富,并且包含了大量实例,让大家学以...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/s?q=python&amp;ob_ext=%7B%22is_middle_page%22%3A1%2C%20%22filter_ob_type%22%3A%22softbox_middle_new%7Cbiu_software_test%22%7D&amp;ie=utf-8&amp;src=softbox_middle_new" target="_blank">python3_电脑版最新正版下载_360软件宝库</a>
+                    </h4>
+                                        <p class="result-desc">python3_3.14.6正版
+通过360安全卫士软件管家功能下载，或使用普通下载</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=example.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">示例网站</span>
+                                                    <span class="text-muted">example.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://example.com/faq-Python" target="_blank">Python常见问题汇总</a>
+                    </h4>
+                                        <p class="result-desc">收集整理了Python学习和使用过程中的常见问题及解决方案。</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Baidu">百度</span>
+                                                            <span class="source-badge source-DuckDuckGo">DuckDuckGo</span>
+                                                            <span class="count-badge">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> 
+                                    2 个搜索引擎收录
+                                </span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.cn-aci.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.cn-aci.com</span>
+                                                    <span class="text-muted">www.cn-aci.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.cn-aci.com/index/aboutaci" target="_blank">aci简介-ACI美国认证协会中国总部-美英澳加</a>
+                    </h4>
+                                        <p class="result-desc">ACI美国认证协会，自从登陆中国以来，得到国家工商总局的正规注册、中华人民共和国驻纽约总领馆的合法公证和网站备案，凭借其 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=hedJjaC291OfPyaFZYFLI4KQWvqt63NBuqkzsG5NXXcHWT0OxmsrNA.." target="_blank">python-基础-简介_知乎</a>
+                    </h4>
+                                        <p class="result-desc">2
+python 简介Python 简介Python 是一种解释型、面向对象、动态数据类型的高级程序设计语言.Python 由 Guido van Rossum 于 1989 年底发明,第一个公开...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.so.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">360搜索</span>
+                                                    <span class="text-muted">www.so.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.so.com/link?m=z4MiYPprHaiQ5xP%2FFJgEen52bIy8jP7JZ7%2B6v8gnq%2BiDpMu3u%2FOCeGBtxXIG%2BppIBtokRfy9kCTGA4DfoNbwm2DSp9TS%2BqDqt%2FJJzMquoGjpT4FGzFpP41oozNeEbDEIG" target="_blank">python-脚本之家</a>
+                    </h4>
+                                        <p class="result-desc">2026年1月13日 - Python是一种面向对象的解释型计算机程序设计语言,由荷兰人Guido van Rossum于1989年发明,Python的定位是 优雅 、 明确 、 简单 ,所以Python程序看上...
+www.jb51.net反馈</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-So">360</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.cn-aci.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">www.cn-aci.com</span>
+                                                    <span class="text-muted">www.cn-aci.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.cn-aci.com/index/zscx.html" target="_blank">aci证书查询-ACI美国认证协会中国总部-美英澳加</a>
+                    </h4>
+                                        <p class="result-desc">美英澳加（深圳）国际文化交流有限公司是ACI美国认证协会国内的总代理商。ACI美国认证协会 (American Certification Institute)是非 …</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Bing">Bing</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=ima.qq.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">ima.qq.com</span>
+                                                    <span class="text-muted">ima.qq.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://ima.qq.com/create/knowledge-base-seomedia?extraInfo=%7B%22launchChannel%22%3A%2210000150%22%2C%22opSlotId%22%3A%221089109%22%2C%22seoType%22%3A%221%22%7D&amp;knowledgeBaseId=7305236662210816&amp;launchChannel=10000150&amp;scene=1" target="_blank">Python如何安装??-腾讯ima 会思考的AI知识库</a>
+                    </h4>
+                                        <p class="result-desc"></p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DSOYnZeCC_r2TvZO1NvjbVIbrfUHQXXh6czaTMNnAuV6JcHF4XZHo64to0wa_Tif" target="_blank">python下载_python免费下载[编程工具]-下载之家</a>
+                    </h4>
+                                        <p class="result-desc">软件介绍 Python是一门跨平台的脚本语言，规定了一个Python语法规则，实现了Python语法的解释程序就成为了Python的解释器，我们用的比较多的是C版...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=hedJjaC291MbDAJyqd-AKrhDcc9QJmXA2p6ebKh4sI-t5pUc3zy0dg.." target="_blank">Python</a>
+                    </h4>
+                                        <p class="result-desc">Python由荷兰数学和计算机科学研究学会的吉多·范罗苏姆于1990年代初设计， 作为一门叫作ABC语言的替代品。Python提供了高效的高级数据结构， 还能简单有效地面向对象编...</p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+                    <div class="result-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+                                    <div class="result-favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=www.sogou.com&amp;sz=64" alt="favicon" onerror="this.style.display='none'">
+                    </div>
+                                <div class="result-content">
+                    <div class="site-info">
+                        <span class="site-name">搜狗</span>
+                                                    <span class="text-muted">www.sogou.com</span>
+                                            </div>
+                    <h4 style="margin-bottom: 5px;">
+                        <a href="https://www.sogou.com/link?url=DSOYnZeCC_pLGCR3azjgxFMyOQXUYmsC" target="_blank">Welcome to Python.org</a>
+                    </h4>
+                                        <p class="result-desc"></p>
+                                        <div class="result-meta">
+                                                    <span style="font-size: 12px; color: #999;">来源:</span>
+                                                            <span class="source-badge source-Sogou">搜狗</span>
+                                                </div>
+                </div>
+            </div>
+            </div>
+                </div>
+<div class="pagination text-center" style="margin-top: 30px;">
+        <span class="btn btn-default">第 1 页</span>
+            <a href="?q=Python&page=2&state=1&l=web" class="btn btn-primary">下一页</a>
+    </div>
+                <div class="footer text-center" style="margin-top: 50px; padding-bottom: 30px;">
+                    <p class="text-muted">AcgIce 搜索 - 多语言聚合搜索引擎</p>
+                    <p class="text-muted" style="font-size: 12px;">聚合 Bing、百度、DuckDuckGo、搜狗、360 搜索结果</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/jquery-1.11.1.min.js"></script>
+    <script src="/static/js/searx.min.js"></script>
+</body>
+</html>
