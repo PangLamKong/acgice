@@ -25,7 +25,7 @@ define('S_Keywords', 'AcgIce,acg,ice');
 define('S_Description', '');
 
 // 定义根目录
-define('G_URL', '/tp/Acgice开源版/');//tp/Acgice开源版/
+define('G_URL', '/');
 // 定义css等的URL
 define('CSS_URL', G_URL.'static/');
 
@@ -41,7 +41,8 @@ include 'config.php';//给全局添加配置项
 
 
 // 加载框架引导文件
-require __DIR__ .'/../tp2/thinkphp/base.php';
+error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_USER_ERROR | E_COMPILE_ERROR);
+require __DIR__ .'/vendor/topthink/framework/base.php';
 // 添加额外的代码
 
 // 执行应用

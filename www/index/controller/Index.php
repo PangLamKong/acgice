@@ -22,12 +22,103 @@ class Index  extends Controller
     }
     public function _initialize()
     {
-        
+
         if(isset($_GET['lang'])){
             cookie('acgice_lang',$_GET['lang'], 7*86400);
         }
 
     }
+
+    // 首页
+    public function index()
+    {
+        global $app_config;
+        $platform = 'pc';
+        $q = isset($_GET['q']) ? $_GET['q'] : '';
+        $state = isset($_GET['state']) ? intval($_GET['state']) : 0;
+        $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+        $l = isset($_GET['l']) ? $_GET['l'] : 'web';
+
+        $q = security_string($q);
+        $state = security_number($state);
+
+        if($q == ''){
+            //首页
+            $data = array();
+            header("Cache-Control: public, max-age=3600");
+            $html_data = [
+               'STATIC_PATH' => CSS_URL,
+               'platform' => $platform,
+               'app_config' => $app_config,
+               'data' => $data,
+               'l' => $l,
+               'key' => '',
+               'page' => 1,
+            ];
+            return view('pc/home',$html_data);
+        }
+
+        // 处理搜索
+        return $this->do_search($q, $page, $state, $l);
+    }
+
+    // 执行搜索
+    private function do_search($q, $page, $state, $l)
+    {
+        global $app_config;
+
+        if($page < 1){
+            $page = 1;
+        }
+
+        $key = $q;
+
+        $Key = new Keys;
+        $key = $Key->Key($key);
+        if($Key->get_sl()){
+            return $Key->get_sl();
+        }
+
+        $sy = array();
+        $cache_time = false;
+
+        $platform = 'pc';
+        $app_config['headers']['User-Agent'] = $app_config['User-Agent']['wz_pc'];
+
+        switch ($l) {
+            case 'video':
+                $sy[] = 'Baidu';
+                $cache_time = 3600;
+                break;
+            default:
+                $l='web';
+                $sy[] = 'Baidu';
+                break;
+        }
+
+        $data = array();
+        if($state !== 0){
+            $Sosuo = new Sousuo;
+            $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
+            $Sosuo->get_sosuo($platform,$cache_time);
+            $data = $Sosuo->get_sort_V1();
+        }
+
+        $html_data = [
+           'app_config' => $app_config,
+           'STATIC_PATH' => CSS_URL,
+           'data' => $data,
+           'key' => $key,
+           'page' => $page,
+           'l' => $l,
+        ];
+        if($state !== 0){
+            return view('pc/data_s',$html_data);
+        }else{
+            return view('pc/data',$html_data);
+        }
+    }
+
     // 优雅的 ( ﹁ ﹁ ) ~→ 弱鸡代码
     public function index_function($q='',$page=1,$state=0,$l='web')
     {

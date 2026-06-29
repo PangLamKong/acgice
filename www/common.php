@@ -398,7 +398,7 @@ $length：截取长度
 $charset=”utf-8″：字符编码，默认UTF－8
 $suffix=true：是否在截取后的字符后面显示省略号，默认true显示，false为不显示
 */
-function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true) 
+function msubstr($str, $start, $length, $charset="utf-8", $suffix=true) 
 { 
  if(function_exists("mb_substr")){ 
  if($suffix) 
@@ -435,6 +435,25 @@ function getSubstr($str, $leftStr, $rightStr)
     //echo '<br>右边:'.$right;
     if($left < 0 or $right < $left) return '';
     return substr($str, $left + strlen($leftStr), $right-$left-strlen($leftStr));
+}
+
+//404错误页面
+function _404(){
+    header('HTTP/1.1 404 Not Found');
+    header('Status: 404 Not Found');
+    echo '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>404 - 页面未找到</title>
+</head>
+<body>
+    <h1>404 - 页面未找到</h1>
+    <p>您访问的页面不存在。</p>
+    <a href="/">返回首页</a>
+</body>
+</html>';
+    exit;
 }
 
 
