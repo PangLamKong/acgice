@@ -218,7 +218,7 @@ if($state !== 0){
            'key' => $key,
            'page' => $page,
            'l' => $l,
-           'weather' => $weather_data,
+           'tool' => $tool_data,
         ];
         if($state !== 0){
             return view('pc/data_s',$html_data);
