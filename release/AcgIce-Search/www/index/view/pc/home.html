@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="{$app_config.app_config['Keywords']|default='AcgIce搜索'}">
+    <meta name="description" content="{$app_config.app_config['Description']|default='AcgIce聚合搜索引擎'}">
+    <title>{$app_config.S_TITLE|default='AcgIce'}</title>
+    <link rel="stylesheet" href="{$STATIC_PATH}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{$STATIC_PATH}css/logicodev.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="logo text-center" style="margin-top: 100px;">
+                    <h1>AcgIce 搜索</h1>
+                    <p class="text-muted">多语言聚合搜索引擎</p>
+                </div>
+                <div class="search-box text-center" style="margin-top: 30px;">
+                    <form id="search_form" action="{:url('index/Index/index_function')}" method="get">
+                        <div class="input-group">
+                            <input type="text" id="q" name="q" class="form-control" placeholder="输入搜索的内容" autocomplete="off">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-primary">搜索</button>
+                            </span>
+                        </div>
+                        <input type="hidden" name="state" value="1">
+                        <input type="hidden" name="l" value="{$l|default='web'}">
+                    </form>
+                </div>
+                <div class="links text-center" style="margin-top: 50px;">
+                    <h4>支持的搜索</h4>
+                    <div class="btn-group">
+                        <a href="?l=web&q=&state=0" class="btn btn-default">网页</a>
+                        <a href="?l=video&q=&state=0" class="btn btn-default">视频</a>
+                    </div>
+                </div>
+                <div class="footer text-center" style="margin-top: 100px;">
+                    <p class="text-muted">这是一个采用 PHP7 制作的聚合搜索引擎</p>
+                    <p>首次搜索的时候处理较慢，请耐心等待。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{$STATIC_PATH}js/jquery-1.11.1.min.js"></script>
+    <script src="{$STATIC_PATH}js/searx.min.js"></script>
+</body>
+</html>
