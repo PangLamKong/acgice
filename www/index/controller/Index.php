@@ -196,15 +196,12 @@ switch ($l) {
         $tool_data = null;
 if($state !== 0){
         $Sosuo = new Sousuo;
-        $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
 
         $tool_data = $Sosuo->get_tool($key);
         if ($tool_data) {
-            if ($tool_data['type'] === 'weather') {
-                $Sosuo->get_sosuo($platform,$cache_time);
-                $data = $Sosuo->get_sort_V2();
-            }
+            $data = array();
         } else {
+            $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
             $Sosuo->get_sosuo($platform,$cache_time);
             $data = $Sosuo->get_sort_V2();
         }
