@@ -193,9 +193,16 @@ switch ($l) {
 
         
         $data = array();
+        $weather_data = null;
 if($state !== 0){
         $Sosuo = new Sousuo;
         $Sosuo->Initialize($sy,$key,$app_config['headers'],$page);
+        
+        if ($Sosuo->is_weather_query($key)) {
+            $city = $Sosuo->extract_city($key);
+            $weather_data = $Sosuo->get_weather($city);
+        }
+        
         $Sosuo->get_sosuo($platform,$cache_time);
         $data = $Sosuo->get_sort_V2();
 }
@@ -203,11 +210,12 @@ if($state !== 0){
 
         $html_data = [
            'app_config' => $app_config,
-           'STATIC_PATH' => CSS_URL,//CSS目录.
-           'data' => $data,//页面数据
-           'key' => $key,//页面数据
-           'page' => $page,//页面数据
-           'l' => $l,//页面数据
+           'STATIC_PATH' => CSS_URL,
+           'data' => $data,
+           'key' => $key,
+           'page' => $page,
+           'l' => $l,
+           'weather' => $weather_data,
         ];
         if($state !== 0){
             return view('pc/data_s',$html_data);

@@ -230,10 +230,39 @@ class Sousuo extends Model
 			$title = $item->find('h2 a')->text();
 			$link = $item->find('h2 a')->href;
 			$desc = $item->find('p')->text();
+			$thumbnail = '';
+			$sitelinks = array();
+
+			$img = $item->find('img')->attr('src');
+			if ($img && (strpos($img, 'http') === 0 || strpos($img, 'data:') === 0)) {
+				$thumbnail = $img;
+			}
+			if (!$img) {
+				$img = $item->find('.thumb img, .rms_img')->attr('src');
+				if ($img && (strpos($img, 'http') === 0 || strpos($img, 'data:') === 0)) {
+					$thumbnail = $img;
+				}
+			}
+
+			$subLinks = $item->find('ul li a, .b_vlist2col a, .b_sitem a');
+			$subLinksData = $subLinks->map(function($a) {
+				$href = $a->href;
+				$text = $a->text();
+				if ($href && $text && strpos($href, 'http') === 0) {
+					return array('title' => $text, 'link' => $href);
+				}
+				return null;
+			});
+			$sublinksArr = $subLinksData->toArray();
+			$sitelinks = array_filter($sublinksArr);
+			$sitelinks = array_slice($sitelinks, 0, 6);
+
 			return array(
 				'title' => $title,
 				'link' => $link,
-				'desc' => $desc
+				'desc' => $desc,
+				'thumbnail' => $thumbnail,
+				'sitelinks' => $sitelinks
 			);
 		});
 		$ql->destruct();
@@ -393,6 +422,73 @@ class Sousuo extends Model
 			return $this->enrich_results($this->get_mock_results($keyword, $page, '360'), 'So');
 		}
 		return $this->enrich_results(array_values($result), 'So');
+	}
+
+	public function get_weather($city = '北京') {
+		$weather_data = $this->get_mock_weather($city);
+		return $weather_data;
+	}
+
+	private function get_mock_weather($city = '北京') {
+		$weather_types = array('晴', '多云', '阴', '小雨', '中雨', '雷阵雨', '小雪', '大雪');
+		$weather_type = $weather_types[array_rand($weather_types)];
+		$temp_high = rand(15, 35);
+		$temp_low = $temp_high - rand(5, 15);
+		$humidity = rand(30, 90);
+		$wind_dir = array('东风', '南风', '西风', '北风', '东南风', '西北风', '东北风', '西南风')[array_rand(array('东风', '南风', '西风', '北风', '东南风', '西北风', '东北风', '西南风'))];
+		$wind_level = rand(1, 5);
+		$air_quality = array('优', '良', '轻度污染')[array_rand(array('优', '良', '轻度污染'))];
+
+		$forecast = array();
+		$days = array('今天', '明天', '后天');
+		foreach ($days as $i => $day) {
+			$forecast[] = array(
+				'day' => $day,
+				'weather' => $weather_types[array_rand($weather_types)],
+				'temp_high' => $temp_high + rand(-3, 3),
+				'temp_low' => $temp_low + rand(-3, 3),
+			);
+		}
+
+		return array(
+			'city' => $city,
+			'weather' => $weather_type,
+			'temp' => round(($temp_high + $temp_low) / 2, 0),
+			'temp_high' => $temp_high,
+			'temp_low' => $temp_low,
+			'humidity' => $humidity,
+			'wind_dir' => $wind_dir,
+			'wind_level' => $wind_level,
+			'air_quality' => $air_quality,
+			'forecast' => $forecast,
+			'update_time' => date('Y-m-d H:i'),
+		);
+	}
+
+	public function is_weather_query($keyword) {
+		$weather_keywords = array('天气', '气温', '温度', '气象', '天气预报', '今天天气', '明天天气');
+		foreach ($weather_keywords as $kw) {
+			if (strpos($keyword, $kw) !== false) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function extract_city($keyword) {
+		$cities = array(
+			'北京', '上海', '广州', '深圳', '杭州', '南京', '成都', '重庆', '武汉', '西安',
+			'天津', '苏州', '郑州', '长沙', '东莞', '沈阳', '青岛', '合肥', '佛山', '济南',
+			'厦门', '福州', '南昌', '南宁', '贵阳', '昆明', '拉萨', '兰州', '西宁', '银川',
+			'乌鲁木齐', '呼和浩特', '哈尔滨', '长春', '石家庄', '太原', '大连', '宁波', '温州',
+			'珠海', '海口', '三亚', '桂林', '丽江', '大理'
+		);
+		foreach ($cities as $city) {
+			if (strpos($keyword, $city) !== false) {
+				return $city;
+			}
+		}
+		return '北京';
 	}
 
 	private function get_mock_results($keyword, $page = 1, $source = 'Mock') {
