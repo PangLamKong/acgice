@@ -284,7 +284,7 @@ class Sousuo extends Model
 
 		$response = $this->curl_get($url, $header);
 		if ($response === false) {
-			return $this->get_mock_results($keyword, $page, 'Baidu');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'Baidu'), 'Baidu');
 		}
 
 		$ql = QueryList::html($response);
@@ -352,7 +352,7 @@ class Sousuo extends Model
 
 		$response = $this->curl_get($url, $header);
 		if ($response === false) {
-			return $this->get_mock_results($keyword, $page, 'Sogou');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'Sogou'), 'Sogou');
 		}
 
 		$ql = QueryList::html($response);
@@ -391,7 +391,7 @@ class Sousuo extends Model
 
 		$response = $this->curl_get($url, $header);
 		if ($response === false) {
-			return $this->get_mock_results($keyword, $page, '360');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'So'), 'So');
 		}
 
 		$ql = QueryList::html($response);
@@ -419,7 +419,7 @@ class Sousuo extends Model
 		});
 
 		if (empty($result)) {
-			return $this->enrich_results($this->get_mock_results($keyword, $page, '360'), 'So');
+			return $this->enrich_results($this->get_mock_results($keyword, $page, 'So'), 'So');
 		}
 		return $this->enrich_results(array_values($result), 'So');
 	}
@@ -505,7 +505,11 @@ class Sousuo extends Model
 				return true;
 			}
 		}
-		if (preg_match('/[\d\+\-\*\/\(\)\.\%]+/', $keyword) && strpos($keyword, '+') !== false || strpos($keyword, '-') !== false || strpos($keyword, '*') !== false || strpos($keyword, '/') !== false) {
+		$cleaned = preg_replace('/\s+/', '', $keyword);
+		if (preg_match('/^[\d\.\+\-\*\/\(\)\%]+$/', $cleaned) && preg_match('/[\+\-\*\/\%]/', $cleaned)) {
+			return true;
+		}
+		if (preg_match('/\d+\s*[\+\-\*\/\%\s]\s*\d+/', $keyword)) {
 			return true;
 		}
 		return false;
@@ -514,7 +518,7 @@ class Sousuo extends Model
 	private function extract_calculator_expr($keyword) {
 		$keyword = preg_replace('/[^0-9\+\-\*\/\(\)\.\%\s]/', ' ', $keyword);
 		$keyword = trim($keyword);
-		$keyword = preg_replace('/\s+/', '', $keyword);
+		$keyword = preg_replace('/\s+/', '+', $keyword);
 		return $keyword;
 	}
 
